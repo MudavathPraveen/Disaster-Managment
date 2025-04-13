@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Earth - Weather, Disasters, Drought</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+
+    #cesiumContainer {
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background-color: #0d1117;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 1000;
+      color: white;
+    }
+
+    .navCon1 {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .VSnav h3 {
+      margin: 0;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .navLinks a {
+      color: white;
+      margin-right: 20px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .navLinks a:hover {
+      text-decoration: underline;
+    }
+
+    .navCon2 .download {
+      background-color: #d73a49;
+      color: white;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legend {
+      position: absolute;
+      bottom: 30px;
+      right: 1px;
+      background: white;
+      color: black;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      line-height: 1.6;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      border-radius: 3px;
+    }
+
+    #gpsButton {
+      position: fixed;
+      top: 80px;
+      left: 20px;
+      z-index: 1000;
+      background-color: #1f6feb;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .legend {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      color: black;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      line-height: 1.6;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    #legendContent {
+      display: none;
+      margin-top: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="navCon1">
+      <div class="VSnav">
+        <h3 onclick="window.open('index.html','_self')">CrisisGaurd</h3>
+      </div>
+      
+      <div class="navLinks" id="navLinks">
+        <a href="index.html">Home</a>
+        <a onclick="window.open('news.html', '_blank')">News</a>
+        <a onclick="window.open('measures.html', '_blank')">Precautions</a>
+        <a href="map.html">Map</a>
+      </div>
+    </div>
+    <div class="navCon2">
+      <button class="download" onclick="window.open('login.html', '_blank')">Rescue</button>
+      <img src="Images/food.png" width="30" id="menu" />
+    </div>
+   
+  </nav>
+
+  <button id="gpsButton">📍 GPS</button>
+  <div id="cesiumContainer"></div>
+
+  <!-- Collapsible Legend -->
+  <div class="legend" onclick="toggleLegend()">
+    <strong>Legend ▼</strong>
+    <div id="legendContent">
+      <span style="background:red;"></span> Earthquake<br>
+      <span style="background:orange;"></span> Wildfire<br>
+      <span style="background:lightblue;"></span> Rain<br>
+      <span style="background:purple;"></span> Thunderstorm<br>
+      <span style="background:yellow;"></span> Drought<br>
+    </div>
+  </div>
+
+  <script>
+    function toggleLegend() {
+      const content = document.getElementById('legendContent');
+      const header = document.querySelector('.legend strong');
+      const isOpen = content.style.display === 'block';
+      content.style.display = isOpen ? 'none' : 'block';
+      header.innerHTML = isOpen ? 'Legend ▼' : 'Legend ▲';
+    }
+
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNDA5MjQ2Yi02YWMwLTRlNDMtODdmZC0wZmYzMTM3MGU4ZjAiLCJpZCI6MjkzNDEzLCJpYXQiOjE3NDQ0NTQzMjZ9.iwVAVMqR7F1jpeORAEZpG2-7IWcs_X063naaD70S1Uw';
+    const OPENWEATHERMAP_KEY = 'your_api_key_here';
+
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: Cesium.createWorldTerrain(),
+      shouldAnimate: true,
+      baseLayerPicker: true
+    });
+
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(0, 20, 20000000)
+    });
+
+    // Earthquakes
+    fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson')
+      .then(res => res.json())
+      .then(data => {
+        data.features.forEach(eq => {
+          const [lon, lat] = eq.geometry.coordinates;
+          const mag = eq.properties.mag;
+          const place = eq.properties.place;
+
+          if (!isNaN(mag) && !isNaN(lat) && !isNaN(lon)) {
+            viewer.entities.add({
+              position: Cesium.Cartesian3.fromDegrees(lon, lat),
+              ellipse: {
+                semiMinorAxis: Math.max(mag * 10000, 5000),
+                semiMajorAxis: Math.max(mag * 10000, 5000),
+                material: Cesium.Color.RED.withAlpha(0.5)
+              },
+              description: `🌍 <b>Earthquake</b><br>Magnitude: ${mag}<br>${place}`
+            });
+          }
+        });
+      });
+
+    // Wildfires
+    fetch('https://firms.modaps.eosdis.nasa.gov/data/active_fire/c6/csv/MODIS_C6_Global_24h.csv')
+      .then(res => res.text())
+      .then(text => {
+        const rows = text.trim().split('\n').slice(1);
+        rows.forEach(row => {
+          const [lat, lon] = row.split(',').map(Number);
+          if (!isNaN(lat) && !isNaN(lon)) {
+            viewer.entities.add({
+              position: Cesium.Cartesian3.fromDegrees(lon, lat),
+              point: {
+                pixelSize: 6,
+                color: Cesium.Color.ORANGE.withAlpha(0.7)
+              },
+              description: "🔥 <b>Wildfire</b>"
+            });
+          }
+        });
+      });
+
+    // Weather (only Rain and Thunderstorm)
+    const weatherLocations = [
+      { lat: 51.5, lon: -0.1, name: "London" },
+      { lat: 40.7, lon: -74.0, name: "New York" },
+      { lat: 35.6, lon: 139.6, name: "Tokyo" },
+      { lat: 28.6, lon: 77.2, name: "Delhi" }
+    ];
+
+    weatherLocations.forEach(loc => {
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${loc.lat}&lon=${loc.lon}&appid=${OPENWEATHERMAP_KEY}&units=metric`)
+        .then(res => res.json())
+        .then(data => {
+          const weather = data.weather[0].main.toLowerCase();
+          const temp = data.main.temp;
+
+          let color = null;
+          if (weather.includes("rain")) color = Cesium.Color.LIGHTBLUE;
+          else if (weather.includes("thunderstorm")) color = Cesium.Color.PURPLE;
+
+          if (color) {
+            viewer.entities.add({
+              position: Cesium.Cartesian3.fromDegrees(loc.lon, loc.lat),
+              ellipse: {
+                semiMinorAxis: 15000,
+                semiMajorAxis: 15000,
+                material: color.withAlpha(0.5)
+              },
+              description: `🌦️ <b>${loc.name}</b><br>Weather: ${weather}<br>Temp: ${temp}°C`
+            });
+          }
+        });
+    });
+
+    // Droughts
+    const droughtRegions = [
+      { lat: 28.6, lon: 77.2, region: "Delhi, India" },
+      { lat: 35.7, lon: -119.4, region: "California, USA" },
+      { lat: -33.9, lon: 18.4, region: "Cape Town, South Africa" }
+    ];
+
+    droughtRegions.forEach(d => {
+      viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(d.lon, d.lat),
+        ellipse: {
+          semiMinorAxis: 40000,
+          semiMajorAxis: 40000,
+          material: Cesium.Color.YELLOW.withAlpha(0.4)
+        },
+        description: `🌾 <b>Drought Region</b><br>${d.region}`
+      });
+    });
+
+    // GPS Button
+    document.getElementById("gpsButton").addEventListener("click", () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(lon, lat, 50000)
+          });
+        }, () => {
+          alert("Location access denied.");
+        });
+      } else {
+        alert("Geolocation not supported.");
+      }
+    });
+    
+const menuIcon = document.querySelector('#menu');
+        const navMenu = document.getElementById('navLinks');
+
+        menuIcon.addEventListener('click', (e) => {
+            console.log(e)
+            navMenu.classList.toggle('active');
+        });
+
+        const navLinks = document.querySelectorAll('.navLinks a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+            });
+        });
+  </script>
+</body>
+</html>

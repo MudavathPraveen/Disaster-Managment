@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disaster News - Daily Updates</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="news.css">
+</head>
+
+<body>
+  <nav>
+    <div class="navCon1">
+      <div class="VSnav">
+        <h3 onclick="window.open('index.html','_self')">CrisisGaurd</h3>
+      </div>
+      
+      <div class="navLinks">
+        <a href="index.html">Home</a>
+        <a href="news.html">News</a>
+        <a href="measures.html">Precautions</a>
+        <a href="map.html">Map</a>
+      </div>
+    </div>
+    <div class="navCon2">
+      <button class="download" onclick="window.open('login.html', '_blank')">Rescue</button>
+      <img src="Images/food.png" width="35" id="menu">
+    </div>
+  </nav><br>
+
+  <main>
+    <div class="container">
+      <h1>Disaster News - Daily Updates</h1>
+      <div id="search-box">
+        <input type="text" id="search-input" placeholder="Search (e.g. flood, earthquake, wildfire)"/>
+      </div>
+      <div id="loading">Loading news...</div>
+      <div id="news-container" class="news-container"></div>
+    </div>
+    <div class="pagination">
+      <button id="prev" disabled>Previous</button>
+      <span id="page-info"></span>
+      <button id="next">Next</button>
+  </div>
+  </main>
+  
+  <footer>
+    <div class="footer">
+      <div class="footCon2">
+        <h1 class="footHead">Newsletter Subscription</h1>
+        <input type="email" placeholder="Enter Email">
+      </div>
+      <div class="footCon3">
+        <h1 class="footHead">We are Social</h1><br>
+        <div class="icons">
+          <img src="Images/facebook.png" width="33" style="background-color: aliceblue; border-radius: 5px;">
+          <img src="images/x.png" style="border-radius: 10px;" width="33">
+          <img src="Images/instagram.png" style="background-color: aliceblue; border-radius: 10px;" width="33">
+        </div>
+      </div>
+    </div><br>
+    <h3>Copyright © 2025 CrisisGaurd | All Rights Reserved.</h3>
+  </footer>
+  <script>
+    
+const menuIcon = document.querySelector('#menu');
+        const navMenu = document.getElementById('navLinks');
+
+        menuIcon.addEventListener('click', (e) => {
+            console.log(e)
+            navMenu.classList.toggle('active');
+        });
+
+        const navLinks = document.querySelectorAll('.navLinks a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+            });
+        });
+  </script>
+  <script src="news.js"></script>
+</body>
+
+</html>

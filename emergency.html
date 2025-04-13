@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emergency Contacts</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0b1a2f;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    header h1 {
+      margin-bottom: 10px;
+      font-size: 2.5rem;
+      color: #00bfff;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    #searchInput {
+      padding: 12px 20px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background-color: #132d4b;
+      color: white;
+    }
+
+    .contact-list {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    .contact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #112b45;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 191, 255, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .contact:hover {
+      transform: translateY(-3px);
+      background-color: #153454;
+    }
+
+    .country {
+      font-size: 18px;
+    }
+
+    .call-button {
+      text-decoration: none;
+      color: white;
+      background-color: #28a745;
+      padding: 10px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
+
+    .call-button:hover {
+      background-color: #1e7e34;
+    }
+
+    .call-button i {
+      font-size: 18px;
+    }
+
+    @media (max-width: 500px) {
+      .contact {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .call-button {
+        align-self: flex-end;
+      }
+    }
+  </style>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header>
+    <h1>Emergency Contacts</h1>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search by country...">
+    </div>
+  </header>
+
+  <div class="contact-list" id="contactList"></div>
+
+  <script>
+    const contacts = [
+      { country: "United States", number: "+1-800-621-3362" },
+      { country: "India", number: "108" },
+      { country: "United Kingdom", number: "999" },
+      { country: "Canada", number: "911" },
+      { country: "Australia", number: "000" },
+      { country: "Germany", number: "112" },
+      { country: "Japan", number: "119" },
+      { country: "South Africa", number: "112" },
+      { country: "Brazil", number: "193" },
+      { country: "France", number: "112" },
+      { country: "Italy", number: "112" },
+      { country: "Mexico", number: "911" },
+      { country: "Nepal", number: "1149" },
+      { country: "Philippines", number: "911" },
+      { country: "Indonesia", number: "112" },
+      { country: "China", number: "120" },
+      { country: "Russia", number: "112" },
+      { country: "Bangladesh", number: "999" },
+      { country: "Sri Lanka", number: "110" },
+      { country: "Thailand", number: "1669" },
+    ];
+
+    const contactList = document.getElementById("contactList");
+    const searchInput = document.getElementById("searchInput");
+
+    function renderContacts(filter = "") {
+      contactList.innerHTML = "";
+
+      const filteredContacts = contacts.filter(contact =>
+        contact.country.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filteredContacts.length === 0) {
+        contactList.innerHTML = `<p style="text-align:center;">No results found.</p>`;
+        return;
+      }
+
+      filteredContacts.forEach(contact => {
+        const phoneDigitsOnly = contact.number.replace(/[^\d+]/g, ''); // clean the number
+
+        const div = document.createElement("div");
+        div.className = "contact";
+
+        div.innerHTML = `
+          <span class="country">${contact.country} - ${contact.number}</span>
+          <a href="tel:${phoneDigitsOnly}" class="call-button" title="Call ${contact.number}">
+            <i class="fas fa-phone"></i>
+          </a>
+        `;
+
+        contactList.appendChild(div);
+      });
+    }
+
+    renderContacts();
+
+    searchInput.addEventListener("input", () => {
+      renderContacts(searchInput.value);
+    });
+  </script>
+</body>
+</html>

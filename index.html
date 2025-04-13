@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav>
+    <div class="navCon1">
+      <div class="VSnav">
+        <h3 onclick="window.open('index.html','_self')">CrisisGaurd</h3>
+      </div>
+      
+      <div class="navLinks" id="navLinks">
+        <a href="index.html">Home</a>
+        <a onclick="window.open('news.html', '_blank')">News</a>
+        <a onclick="window.open('measures.html', '_blank')">Precautions</a>
+        <a href="map.html">Map</a>
+        <a href="#about">About us</a>
+      </div>
+    </div>
+    <div class="navCon2">
+      <button class="download" onclick="window.open('login.html', '_blank')">Rescue</button>
+      <img src="Images/food.png" width="30" id="menu">
+    </div>
+   
+  </nav><br>
+  <main>
+    <div class="slidingCards" id="navCon1">
+      <button id="prevBtn">&lt;</button>
+      <div class="video-container">
+
+        <div class="video-item active">
+          <b class="videoTitle">Latest News</b>
+          <img src="https://t4.ftcdn.net/jpg/09/49/36/15/360_F_949361534_SswW9uegFAejlnJAfxkLyQVgF732o1fK.jpg" onclick="window.open('news.html', '_blank')" >
+        </div>
+
+        <div class="video-item">
+          <b class="videoTitle">Alerts</b>
+          <img src="Images/CrisiGaurd(2).jpg" onclick="window.open('alert.html', '_blank')">
+        </div>
+
+        <div class="video-item">
+          <b class="videoTitle">Safety Measures</b>
+          <img src="https://wallpapers.com/images/featured/safety-pictures-yxhdianfjuydk3zt.jpg" onclick="window.open('measures.html', '_blank')">
+
+        </div>
+      </div>
+      <button id="nextBtn">&gt;</button>
+    </div><br>
+    <div class="about" id="about">
+      <h1 style="text-align: center;">About Us</h1><br><br>
+      <p><b>CrisisGaurd</b> is an organisation whose main goal is to save people from disasters. User can access various
+        types
+        of data or even raise an alert when there is a disaster occuring at his/her place. This website contains
+        sections like NEWS, MAP and precautions.</p><br>
+      <p><b>MAP</b> shows all the areas where disasters are occuring at real-time </p><br>
+      <p><b>NEWS</b> contains the latest updates going around the world </p><br>
+      <p><b>Precautions</b> contains all the necessary precautions needed to be taken care when a disaster occurs</p>
+      <br>
+    </div><br><br>
+  </main>
+  <footer>
+    <div class="footer">
+      <div class="footCon2">
+        <h1 class="footHead">Newsletter Subscription</h1>
+        <input type="email" placeholder="Enter Email">
+      </div>
+      <div class="footCon3">
+        <h1 class="footHead">We are Social</h1><br>
+        <div class="icons">
+          <img src="Images/facebook.png" width="33" style="background-color: aliceblue; border-radius: 8px;">
+          <img src="images/x.png" style="border-radius: 10px;" width="33">
+          <img src="Images/instagram.png" style="background-color: aliceblue; border-radius: 10px;" width="33">
+        </div>
+      </div>
+    </div><br>
+    <h3>Copyright © 2025 CrisisGaurd | All Rights Reserved.</h3>
+  </footer>
+  <script src="demo.js"></script>
+</body>
+
+</html>
