@@ -1,17 +1,20 @@
+const API_KEY = '294e2179a5ad45b784574885fab2a5d3';
+    const query = '("earthquake" OR "flood" OR "wildfire" OR "tsunami" OR "cyclone" OR "drought")';
+    const NEWS_URL = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&language=en&pageSize=40&apiKey=${API_KEY}`;
 
-    const API_KEY = '294e2179a5ad45b784574885fab2a5d3';
-    const query = '("earthquake" OR "flood" OR "wildfire" OR "tsunami" OR "cyclone")';
-    const NEWS_URL = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&language=en&pageSize=20&apiKey=${API_KEY}`;
-
+    const cardsPerPage = 9;
     let allArticles = [];
+    let currentPage = 1;
 
     async function fetchDisasterNews() {
       try {
         const res = await fetch(NEWS_URL);
         const data = await res.json();
         allArticles = data.articles || [];
+
         document.getElementById('loading').style.display = 'none';
-        renderNews(allArticles);
+        renderPaginatedNews();
+        updatePagination();
       } catch (error) {
         console.error('Error fetching news:', error);
         document.getElementById('loading').innerText = 'Failed to load news.';
@@ -42,17 +45,16 @@
           tagClass = 'earthquake'; tagLabel = 'Earthquake';
         } else if (lowerText.includes('flood')) {
           tagClass = 'flood'; tagLabel = 'Flood';
-        } else if (lowerText.includes('wildfire') || lowerText.includes('wildfire')) {
+        } else if (lowerText.includes('wildfire')) {
           tagClass = 'wildfire'; tagLabel = 'Wildfire';
         } else if (lowerText.includes('cyclone')) {
           tagClass = 'cyclone'; tagLabel = 'Cyclone';
         } else if (lowerText.includes('tsunami')) {
           tagClass = 'tsunami'; tagLabel = 'Tsunami';
-        } else if(lowerText.includes('drought')) {
-          tagClass = 'drought'; tagLabel = 'drought';
-        } 
-        else{
-          return;
+        } else if (lowerText.includes('drought')) {
+          tagClass = 'drought'; tagLabel = 'Drought';
+        } else {
+          return; // Skip unrelated news
         }
 
         card.innerHTML = `
@@ -66,74 +68,46 @@
       });
     }
 
+    function renderPaginatedNews() {
+      const start = (currentPage - 1) * cardsPerPage;
+      const end = start + cardsPerPage;
+      const paginated = allArticles.slice(start, end);
+      renderNews(paginated);
+      updatePagination();
+    }
+
+    function updatePagination() {
+      const totalPages = Math.ceil(allArticles.length / cardsPerPage);
+      document.getElementById('prev').disabled = currentPage === 1;
+      document.getElementById('next').disabled = currentPage >= totalPages;
+      document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages}`;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPaginatedNews();
+      }
+    });
+
+    document.getElementById('next').addEventListener('click', () => {
+      const totalPages = Math.ceil(allArticles.length / cardsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPaginatedNews();
+      }
+    });
+
     document.getElementById('search-input').addEventListener('input', (e) => {
       const keyword = e.target.value.toLowerCase();
       const filtered = allArticles.filter(article =>
         (article.title + article.description).toLowerCase().includes(keyword)
       );
-      renderNews(filtered);
+      currentPage = 1;
+      renderNews(filtered.slice(0, cardsPerPage));
+      document.getElementById('page-info').textContent = `Filtered results`;
+      document.getElementById('prev').disabled = true;
+      document.getElementById('next').disabled = true;
     });
 
     window.onload = fetchDisasterNews;
-
-
-    // script.js
-const cardsPerPage = 9; // Number of cards to display per page
-let currentPage = 1; // Current page number
-const totalCards = 40; // Total number of cards (you can update this daily)
-const totalPages = Math.ceil(totalCards / cardsPerPage); // Total number of pages
-
-// Function to generate dummy card data
-function generateCards() {
-    const cards = [];
-    for (let i = 1; i <= totalCards; i++) {
-        cards.push(`Card ${i}`);
-    }
-    return cards;
-}
-
-// Function to display cards for the current page
-function displayCards(cards) {
-    const cardContainer = document.getElementById('news-container');
-    cardContainer.innerHTML = ''; // Clear previous cards
-
-    const start = (currentPage - 1) * cardsPerPage;
-    const end = start + cardsPerPage;
-    const cardsToDisplay = cards.slice(start, end);
-
-    cardsToDisplay.forEach(card => {
-        const cardElement = document.createElement('div');
-        cardElement.className = 'news-card';
-        cardElement.textContent = card;
-        cardContainer.appendChild(cardElement);
-    });
-
-    document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages}`;
-}
-
-// Function to handle pagination
-function updatePagination() {
-    document.getElementById('prev').disabled = currentPage === 1;
-    document.getElementById('next').disabled = currentPage === totalPages;
-}
-
-// Event listeners for pagination buttons
-document.getElementById('prev').addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        updatePagination();
-        displayCards(generateCards());
-    }
-});
-
-document.getElementById('next').addEventListener('click', () => {
-    if (currentPage < totalPages) {
-        currentPage++;
-        updatePagination();
-        displayCards(generateCards());
-    }
-});
-
-// Initial display
-displayCards(generateCards());
-updatePagination();
